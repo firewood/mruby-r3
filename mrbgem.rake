@@ -19,4 +19,8 @@ MRuby::Gem::Specification.new('mruby-r3') do |spec|
   spec.cc.include_paths << "#{r3_dir}/include"
   spec.linker.flags_before_libraries << "#{lib_dir}/libr3.a"
   spec.linker.libraries << "pcre"
+  spec.cc.flags << `pcre-config --cflags`.delete("\n\r").split(" ")
+  pcre_libs = "#{`pcre-config --libs`.delete("\n\r")}".split(" ")
+  libpaths = pcre_libs.select {|e| e =~ /^-L/ }.map {|e| e[2..-1].sub(/^\"(.*)\"$/) { $1 }}
+  spec.linker.library_paths << libpaths
 end
